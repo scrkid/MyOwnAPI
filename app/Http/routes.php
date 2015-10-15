@@ -11,4 +11,8 @@
 |
 */
 
-Route::get('/{name?}', 'MyController@index');
+Route::resource('makers', 'MakerController');
+
+Route::resource('vehicle', 'VehicleController');
+
+Route::resource('makers.vehicle', 'MakerVehicleController');
