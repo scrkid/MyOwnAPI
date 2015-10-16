@@ -3,5 +3,5 @@
 require_once '/vendor/autoload.php';
 
 // setup Propel
-require_once 'generated-conf/config.php';
+require_once '/generated-conf/config.php';
 ?>

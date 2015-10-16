@@ -1,16 +1,15 @@
 <?php namespace App\Http\Controllers;
 
-// setup the autoloading
-require_once 'C:\xampp\htdocs\MyOwnAPI\vendor\autoload.php';
 
-// setup Propel
-require_once 'C:\xampp\htdocs\MyOwnAPI\generated-conf\config.php';
+require_once $_SERVER["DOCUMENT_ROOT"].'\..\propel_init.php';
+
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
 use Anand\Make;
 use Anand\MakeQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -27,11 +26,8 @@ class MakerController extends Controller {
 	public function index()
 	{
 		//
-		$makers = MakeQuery::create()->find();
-		foreach($makers as $maker){
-			echo $maker->getBrandName();
-			echo "<br>";
-		}
+		$makers = MakeQuery::create()->find()->toArray();
+		return response()->json(['data'=>$makers], 404);
 	}
 
 	/**
@@ -62,7 +58,15 @@ class MakerController extends Controller {
 	 */
 	public function show($id)
 	{
-		$make = new Make();
+		$makers = MakeQuery::create()->findPK($id);
+		if(!$makers){
+			return response()->json(['message'=>'This maker doesnot exist', 'code'=>404], 404);
+		}
+		$vehicles = $makers->getVehicles()->toArray();
+
+		//return response($vehicles->toJson());
+
+		return response()->json(['data'=>$vehicles], 200);
 	}
 
 	/**

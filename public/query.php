@@ -1,23 +1,15 @@
 <?php
 // setup the autoloading
-require_once 'C:\xampp\htdocs\MyOwnAPI\vendor\autoload.php';
+require_once '$_SERVER["DOCUMENT_ROOT"]\..\vendor\autoload.php';
 
 // setup Propel
 require_once 'C:\xampp\htdocs\MyOwnAPI\generated-conf\config.php';
 
-use Anand\Make;
-use Propel\Runtime\ActiveQuery\Criteria;
+$some_relative_path = "hello"; 
+$server_url = $_SERVER["SERVER_NAME"]; 
+$doc_root = $_SERVER["DOCUMENT_ROOT"]; 
 
-echo "hello";
 
-$make = new Make();
-
-$make->setBrandName("Suzuki");
-
-$make->save();
-
-$json_make = json_encode($make);
-
-echo $json_make;
+echo $appRootPath;
 
 ?>
