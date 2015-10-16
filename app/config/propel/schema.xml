@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="Anand">
   <table name="make" idMethod="native" phpName="Make">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
     <column name="BrandName" phpName="Brandname" type="VARCHAR" size="45"/>

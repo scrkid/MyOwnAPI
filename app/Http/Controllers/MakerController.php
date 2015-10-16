@@ -1,7 +1,19 @@
 <?php namespace App\Http\Controllers;
 
+// setup the autoloading
+require_once 'C:\xampp\htdocs\MyOwnAPI\vendor\autoload.php';
+
+// setup Propel
+require_once 'C:\xampp\htdocs\MyOwnAPI\generated-conf\config.php';
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Anand\Make;
+use Anand\MakeQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use Illuminate\Http\Request;
 
@@ -15,6 +27,11 @@ class MakerController extends Controller {
 	public function index()
 	{
 		//
+		$makers = MakeQuery::create()->find();
+		foreach($makers as $maker){
+			echo $maker->getBrandName();
+			echo "<br>";
+		}
 	}
 
 	/**
@@ -24,7 +41,7 @@ class MakerController extends Controller {
 	 */
 	public function create()
 	{
-		return "create called";
+		
 	}
 
 	/**
@@ -45,7 +62,7 @@ class MakerController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$make = new Make();
 	}
 
 	/**

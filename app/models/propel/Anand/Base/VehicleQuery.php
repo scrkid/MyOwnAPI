@@ -1,12 +1,12 @@
 <?php
 
-namespace Base;
+namespace Anand\Base;
 
-use \Vehicle as ChildVehicle;
-use \VehicleQuery as ChildVehicleQuery;
 use \Exception;
 use \PDO;
-use Map\VehicleTableMap;
+use Anand\Vehicle as ChildVehicle;
+use Anand\VehicleQuery as ChildVehicleQuery;
+use Anand\Map\VehicleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -48,7 +48,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVehicleQuery rightJoinWithMake() Adds a RIGHT JOIN clause and with to the query using the Make relation
  * @method     ChildVehicleQuery innerJoinWithMake() Adds a INNER JOIN clause and with to the query using the Make relation
  *
- * @method     \MakeQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Anand\MakeQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildVehicle findOne(ConnectionInterface $con = null) Return the first ChildVehicle matching the query
  * @method     ChildVehicle findOneOrCreate(ConnectionInterface $con = null) Return the first ChildVehicle matching the query, or a new ChildVehicle object populated from the query conditions when no match is found
@@ -79,13 +79,13 @@ abstract class VehicleQuery extends ModelCriteria
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \Base\VehicleQuery object.
+     * Initializes internal state of \Anand\Base\VehicleQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'default', $modelName = '\\Vehicle', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\Anand\\Vehicle', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -396,9 +396,9 @@ abstract class VehicleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Make object
+     * Filter the query by a related \Anand\Make object
      *
-     * @param \Make|ObjectCollection $make The related object(s) to use as filter
+     * @param \Anand\Make|ObjectCollection $make The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @throws \Propel\Runtime\Exception\PropelException
@@ -407,7 +407,7 @@ abstract class VehicleQuery extends ModelCriteria
      */
     public function filterByMake($make, $comparison = null)
     {
-        if ($make instanceof \Make) {
+        if ($make instanceof \Anand\Make) {
             return $this
                 ->addUsingAlias(VehicleTableMap::COL_MAKE_ID, $make->getId(), $comparison);
         } elseif ($make instanceof ObjectCollection) {
@@ -418,7 +418,7 @@ abstract class VehicleQuery extends ModelCriteria
             return $this
                 ->addUsingAlias(VehicleTableMap::COL_MAKE_ID, $make->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByMake() only accepts arguments of type \Make or Collection');
+            throw new PropelException('filterByMake() only accepts arguments of type \Anand\Make or Collection');
         }
     }
 
@@ -463,13 +463,13 @@ abstract class VehicleQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \MakeQuery A secondary query class using the current class as primary query
+     * @return \Anand\MakeQuery A secondary query class using the current class as primary query
      */
     public function useMakeQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinMake($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Make', '\MakeQuery');
+            ->useQuery($relationAlias ? $relationAlias : 'Make', '\Anand\MakeQuery');
     }
 
     /**

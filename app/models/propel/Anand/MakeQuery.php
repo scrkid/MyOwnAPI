@@ -1,9 +1,11 @@
 <?php
 
-use Base\Vehicle as BaseVehicle;
+namespace Anand;
+
+use Anand\Base\MakeQuery as BaseMakeQuery;
 
 /**
- * Skeleton subclass for representing a row from the 'vehicle' table.
+ * Skeleton subclass for performing query and update operations on the 'make' table.
  *
  *
  *
@@ -12,7 +14,7 @@ use Base\Vehicle as BaseVehicle;
  * long as it does not already exist in the output directory.
  *
  */
-class Vehicle extends BaseVehicle
+class MakeQuery extends BaseMakeQuery
 {
 
 }

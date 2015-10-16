@@ -14,7 +14,7 @@
 	},
 	"autoload": {
 		"classmap": [
-			"database"
+			["app/models/propel/Anand/"]
 		],
 		"psr-4": {
 			"App\\": "app/"

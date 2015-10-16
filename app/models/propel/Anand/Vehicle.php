@@ -1,9 +1,11 @@
 <?php
 
-use Base\VehicleQuery as BaseVehicleQuery;
+namespace Anand;
+
+use Anand\Base\Vehicle as BaseVehicle;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'vehicle' table.
+ * Skeleton subclass for representing a row from the 'vehicle' table.
  *
  *
  *
@@ -12,7 +14,7 @@ use Base\VehicleQuery as BaseVehicleQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class VehicleQuery extends BaseVehicleQuery
+class Vehicle extends BaseVehicle
 {
 
 }

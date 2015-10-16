@@ -1,6 +1,8 @@
 <?php
 
-use Base\Make as BaseMake;
+namespace Anand;
+
+use Anand\Base\Make as BaseMake;
 
 /**
  * Skeleton subclass for representing a row from the 'make' table.

@@ -14,7 +14,7 @@
             <!-- The directory where Propel expects to find your `schema.xml` file. -->
             <schemaDir>C:\xampp\htdocs\MyOwnAPI\app\config\propel</schemaDir>
             <!-- The directory where Propel should output generated object model classes. -->
-            <phpDir>C:\xampp\htdocs\MyOwnAPI\app\models\propel</phpDir>
+            <phpDir>C:\xampp\htdocs\MyOwnAPI\models\propel</phpDir>
         </paths>
 
         <!--

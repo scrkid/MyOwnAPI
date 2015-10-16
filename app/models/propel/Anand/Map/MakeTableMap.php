@@ -1,9 +1,9 @@
 <?php
 
-namespace Map;
+namespace Anand\Map;
 
-use \Vehicle;
-use \VehicleQuery;
+use Anand\Make;
+use Anand\MakeQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'vehicle' table.
+ * This class defines the structure of the 'make' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class VehicleTableMap extends TableMap
+class MakeTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class VehicleTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.VehicleTableMap';
+    const CLASS_NAME = 'Anand.Map.MakeTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class VehicleTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'vehicle';
+    const TABLE_NAME = 'make';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Vehicle';
+    const OM_CLASS = '\\Anand\\Make';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Vehicle';
+    const CLASS_DEFAULT = 'Anand.Make';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 2;
 
     /**
      * The number of lazy-loaded columns
@@ -69,27 +69,17 @@ class VehicleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 2;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'vehicle.id';
+    const COL_ID = 'make.id';
 
     /**
-     * the column name for the Name field
+     * the column name for the BrandName field
      */
-    const COL_NAME = 'vehicle.Name';
-
-    /**
-     * the column name for the Color field
-     */
-    const COL_COLOR = 'vehicle.Color';
-
-    /**
-     * the column name for the Make_id field
-     */
-    const COL_MAKE_ID = 'vehicle.Make_id';
+    const COL_BRANDNAME = 'make.BrandName';
 
     /**
      * The default string format for model objects of the related table
@@ -103,11 +93,11 @@ class VehicleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Color', 'MakeId', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'color', 'makeId', ),
-        self::TYPE_COLNAME       => array(VehicleTableMap::COL_ID, VehicleTableMap::COL_NAME, VehicleTableMap::COL_COLOR, VehicleTableMap::COL_MAKE_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'Name', 'Color', 'Make_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Brandname', ),
+        self::TYPE_CAMELNAME     => array('id', 'brandname', ),
+        self::TYPE_COLNAME       => array(MakeTableMap::COL_ID, MakeTableMap::COL_BRANDNAME, ),
+        self::TYPE_FIELDNAME     => array('id', 'BrandName', ),
+        self::TYPE_NUM           => array(0, 1, )
     );
 
     /**
@@ -117,11 +107,11 @@ class VehicleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Color' => 2, 'MakeId' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'color' => 2, 'makeId' => 3, ),
-        self::TYPE_COLNAME       => array(VehicleTableMap::COL_ID => 0, VehicleTableMap::COL_NAME => 1, VehicleTableMap::COL_COLOR => 2, VehicleTableMap::COL_MAKE_ID => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'Name' => 1, 'Color' => 2, 'Make_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Brandname' => 1, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'brandname' => 1, ),
+        self::TYPE_COLNAME       => array(MakeTableMap::COL_ID => 0, MakeTableMap::COL_BRANDNAME => 1, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'BrandName' => 1, ),
+        self::TYPE_NUM           => array(0, 1, )
     );
 
     /**
@@ -134,17 +124,15 @@ class VehicleTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('vehicle');
-        $this->setPhpName('Vehicle');
+        $this->setName('make');
+        $this->setPhpName('Make');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Vehicle');
-        $this->setPackage('');
+        $this->setClassName('\\Anand\\Make');
+        $this->setPackage('Anand');
         $this->setUseIdGenerator(false);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('Name', 'Name', 'VARCHAR', false, 45, null);
-        $this->addColumn('Color', 'Color', 'VARCHAR', false, 45, null);
-        $this->addForeignKey('Make_id', 'MakeId', 'INTEGER', 'make', 'id', true, null, null);
+        $this->addColumn('BrandName', 'Brandname', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -152,13 +140,13 @@ class VehicleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Make', '\\Make', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Vehicle', '\\Anand\\Vehicle', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Make_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), null, null, 'Vehicles', false);
     } // buildRelations()
 
     /**
@@ -218,7 +206,7 @@ class VehicleTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? VehicleTableMap::CLASS_DEFAULT : VehicleTableMap::OM_CLASS;
+        return $withPrefix ? MakeTableMap::CLASS_DEFAULT : MakeTableMap::OM_CLASS;
     }
 
     /**
@@ -232,22 +220,22 @@ class VehicleTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Vehicle object, last column rank)
+     * @return array           (Make object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = VehicleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = VehicleTableMap::getInstanceFromPool($key))) {
+        $key = MakeTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = MakeTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + VehicleTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + MakeTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = VehicleTableMap::OM_CLASS;
-            /** @var Vehicle $obj */
+            $cls = MakeTableMap::OM_CLASS;
+            /** @var Make $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            VehicleTableMap::addInstanceToPool($obj, $key);
+            MakeTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -270,18 +258,18 @@ class VehicleTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = VehicleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = VehicleTableMap::getInstanceFromPool($key))) {
+            $key = MakeTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = MakeTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Vehicle $obj */
+                /** @var Make $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                VehicleTableMap::addInstanceToPool($obj, $key);
+                MakeTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -302,15 +290,11 @@ class VehicleTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(VehicleTableMap::COL_ID);
-            $criteria->addSelectColumn(VehicleTableMap::COL_NAME);
-            $criteria->addSelectColumn(VehicleTableMap::COL_COLOR);
-            $criteria->addSelectColumn(VehicleTableMap::COL_MAKE_ID);
+            $criteria->addSelectColumn(MakeTableMap::COL_ID);
+            $criteria->addSelectColumn(MakeTableMap::COL_BRANDNAME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.Name');
-            $criteria->addSelectColumn($alias . '.Color');
-            $criteria->addSelectColumn($alias . '.Make_id');
+            $criteria->addSelectColumn($alias . '.BrandName');
         }
     }
 
@@ -323,7 +307,7 @@ class VehicleTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(VehicleTableMap::DATABASE_NAME)->getTable(VehicleTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(MakeTableMap::DATABASE_NAME)->getTable(MakeTableMap::TABLE_NAME);
     }
 
     /**
@@ -331,16 +315,16 @@ class VehicleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(VehicleTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(VehicleTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new VehicleTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(MakeTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(MakeTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new MakeTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Vehicle or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Make or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Vehicle object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Make object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -351,27 +335,27 @@ class VehicleTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(VehicleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MakeTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Vehicle) { // it's a model object
+        } elseif ($values instanceof \Anand\Make) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(VehicleTableMap::DATABASE_NAME);
-            $criteria->add(VehicleTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(MakeTableMap::DATABASE_NAME);
+            $criteria->add(MakeTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = VehicleQuery::create()->mergeWith($criteria);
+        $query = MakeQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            VehicleTableMap::clearInstancePool();
+            MakeTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                VehicleTableMap::removeInstanceFromPool($singleval);
+                MakeTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -379,20 +363,20 @@ class VehicleTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the vehicle table.
+     * Deletes all rows from the make table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return VehicleQuery::create()->doDeleteAll($con);
+        return MakeQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Vehicle or Criteria object.
+     * Performs an INSERT on the database, given a Make or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Vehicle object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Make object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -401,18 +385,18 @@ class VehicleTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(VehicleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MakeTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Vehicle object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Make object
         }
 
 
         // Set the correct dbName
-        $query = VehicleQuery::create()->mergeWith($criteria);
+        $query = MakeQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -421,7 +405,7 @@ class VehicleTableMap extends TableMap
         });
     }
 
-} // VehicleTableMap
+} // MakeTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-VehicleTableMap::buildTableMap();
+MakeTableMap::buildTableMap();

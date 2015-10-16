@@ -1,18 +1,20 @@
 <?php
 
-namespace Base;
+namespace Anand\Base;
 
-use \Make as ChildMake;
-use \MakeQuery as ChildMakeQuery;
-use \VehicleQuery as ChildVehicleQuery;
 use \Exception;
 use \PDO;
-use Map\VehicleTableMap;
+use Anand\Make as ChildMake;
+use Anand\MakeQuery as ChildMakeQuery;
+use Anand\Vehicle as ChildVehicle;
+use Anand\VehicleQuery as ChildVehicleQuery;
+use Anand\Map\MakeTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -21,18 +23,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'vehicle' table.
+ * Base class that represents a row from the 'make' table.
  *
  *
  *
-* @package    propel.generator..Base
+* @package    propel.generator.Anand.Base
 */
-abstract class Vehicle implements ActiveRecordInterface
+abstract class Make implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\VehicleTableMap';
+    const TABLE_MAP = '\\Anand\\Map\\MakeTableMap';
 
 
     /**
@@ -69,30 +71,17 @@ abstract class Vehicle implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the name field.
+     * The value for the brandname field.
      *
      * @var        string
      */
-    protected $name;
+    protected $brandname;
 
     /**
-     * The value for the color field.
-     *
-     * @var        string
+     * @var        ObjectCollection|ChildVehicle[] Collection to store aggregation of ChildVehicle objects.
      */
-    protected $color;
-
-    /**
-     * The value for the make_id field.
-     *
-     * @var        int
-     */
-    protected $make_id;
-
-    /**
-     * @var        ChildMake
-     */
-    protected $aMake;
+    protected $collVehicles;
+    protected $collVehiclesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -103,7 +92,13 @@ abstract class Vehicle implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\Vehicle object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildVehicle[]
+     */
+    protected $vehiclesScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of Anand\Base\Make object.
      */
     public function __construct()
     {
@@ -198,9 +193,9 @@ abstract class Vehicle implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Vehicle</code> instance.  If
-     * <code>obj</code> is an instance of <code>Vehicle</code>, delegates to
-     * <code>equals(Vehicle)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Make</code> instance.  If
+     * <code>obj</code> is an instance of <code>Make</code>, delegates to
+     * <code>equals(Make)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -266,7 +261,7 @@ abstract class Vehicle implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Vehicle The current object, for fluid interface
+     * @return $this|Make The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -335,40 +330,20 @@ abstract class Vehicle implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
+     * Get the [brandname] column value.
      *
      * @return string
      */
-    public function getName()
+    public function getBrandname()
     {
-        return $this->name;
-    }
-
-    /**
-     * Get the [color] column value.
-     *
-     * @return string
-     */
-    public function getColor()
-    {
-        return $this->color;
-    }
-
-    /**
-     * Get the [make_id] column value.
-     *
-     * @return int
-     */
-    public function getMakeId()
-    {
-        return $this->make_id;
+        return $this->brandname;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Vehicle The current object (for fluent API support)
+     * @return $this|\Anand\Make The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -378,75 +353,31 @@ abstract class Vehicle implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[VehicleTableMap::COL_ID] = true;
+            $this->modifiedColumns[MakeTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [name] column.
+     * Set the value of [brandname] column.
      *
      * @param string $v new value
-     * @return $this|\Vehicle The current object (for fluent API support)
+     * @return $this|\Anand\Make The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setBrandname($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[VehicleTableMap::COL_NAME] = true;
+        if ($this->brandname !== $v) {
+            $this->brandname = $v;
+            $this->modifiedColumns[MakeTableMap::COL_BRANDNAME] = true;
         }
 
         return $this;
-    } // setName()
-
-    /**
-     * Set the value of [color] column.
-     *
-     * @param string $v new value
-     * @return $this|\Vehicle The current object (for fluent API support)
-     */
-    public function setColor($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->color !== $v) {
-            $this->color = $v;
-            $this->modifiedColumns[VehicleTableMap::COL_COLOR] = true;
-        }
-
-        return $this;
-    } // setColor()
-
-    /**
-     * Set the value of [make_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Vehicle The current object (for fluent API support)
-     */
-    public function setMakeId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->make_id !== $v) {
-            $this->make_id = $v;
-            $this->modifiedColumns[VehicleTableMap::COL_MAKE_ID] = true;
-        }
-
-        if ($this->aMake !== null && $this->aMake->getId() !== $v) {
-            $this->aMake = null;
-        }
-
-        return $this;
-    } // setMakeId()
+    } // setBrandname()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -484,17 +415,11 @@ abstract class Vehicle implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : VehicleTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : MakeTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : VehicleTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : VehicleTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->color = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VehicleTableMap::translateFieldName('MakeId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->make_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : MakeTableMap::translateFieldName('Brandname', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->brandname = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -503,10 +428,10 @@ abstract class Vehicle implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = VehicleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = MakeTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Vehicle'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Anand\\Make'), 0, $e);
         }
     }
 
@@ -525,9 +450,6 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aMake !== null && $this->make_id !== $this->aMake->getId()) {
-            $this->aMake = null;
-        }
     } // ensureConsistency
 
     /**
@@ -551,13 +473,13 @@ abstract class Vehicle implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(VehicleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(MakeTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildVehicleQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildMakeQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -567,7 +489,8 @@ abstract class Vehicle implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aMake = null;
+            $this->collVehicles = null;
+
         } // if (deep)
     }
 
@@ -577,8 +500,8 @@ abstract class Vehicle implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Vehicle::setDeleted()
-     * @see Vehicle::isDeleted()
+     * @see Make::setDeleted()
+     * @see Make::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -587,11 +510,11 @@ abstract class Vehicle implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(VehicleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MakeTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildVehicleQuery::create()
+            $deleteQuery = ChildMakeQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -622,7 +545,7 @@ abstract class Vehicle implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(VehicleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MakeTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -641,7 +564,7 @@ abstract class Vehicle implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                VehicleTableMap::addInstanceToPool($this);
+                MakeTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -667,18 +590,6 @@ abstract class Vehicle implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aMake !== null) {
-                if ($this->aMake->isModified() || $this->aMake->isNew()) {
-                    $affectedRows += $this->aMake->save($con);
-                }
-                $this->setMake($this->aMake);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -688,6 +599,23 @@ abstract class Vehicle implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->vehiclesScheduledForDeletion !== null) {
+                if (!$this->vehiclesScheduledForDeletion->isEmpty()) {
+                    \Anand\VehicleQuery::create()
+                        ->filterByPrimaryKeys($this->vehiclesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->vehiclesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collVehicles !== null) {
+                foreach ($this->collVehicles as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -712,21 +640,15 @@ abstract class Vehicle implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(VehicleTableMap::COL_ID)) {
+        if ($this->isColumnModified(MakeTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(VehicleTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'Name';
-        }
-        if ($this->isColumnModified(VehicleTableMap::COL_COLOR)) {
-            $modifiedColumns[':p' . $index++]  = 'Color';
-        }
-        if ($this->isColumnModified(VehicleTableMap::COL_MAKE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'Make_id';
+        if ($this->isColumnModified(MakeTableMap::COL_BRANDNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'BrandName';
         }
 
         $sql = sprintf(
-            'INSERT INTO vehicle (%s) VALUES (%s)',
+            'INSERT INTO make (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -738,14 +660,8 @@ abstract class Vehicle implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'Name':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
-                        break;
-                    case 'Color':
-                        $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
-                        break;
-                    case 'Make_id':
-                        $stmt->bindValue($identifier, $this->make_id, PDO::PARAM_INT);
+                    case 'BrandName':
+                        $stmt->bindValue($identifier, $this->brandname, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -786,7 +702,7 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = VehicleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = MakeTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -806,13 +722,7 @@ abstract class Vehicle implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getName();
-                break;
-            case 2:
-                return $this->getColor();
-                break;
-            case 3:
-                return $this->getMakeId();
+                return $this->getBrandname();
                 break;
             default:
                 return null;
@@ -838,16 +748,14 @@ abstract class Vehicle implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Vehicle'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Make'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Vehicle'][$this->hashCode()] = true;
-        $keys = VehicleTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Make'][$this->hashCode()] = true;
+        $keys = MakeTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getColor(),
-            $keys[3] => $this->getMakeId(),
+            $keys[1] => $this->getBrandname(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -855,20 +763,20 @@ abstract class Vehicle implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aMake) {
+            if (null !== $this->collVehicles) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'make';
+                        $key = 'vehicles';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'make';
+                        $key = 'vehicles';
                         break;
                     default:
-                        $key = 'Make';
+                        $key = 'Vehicles';
                 }
 
-                $result[$key] = $this->aMake->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->collVehicles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -884,11 +792,11 @@ abstract class Vehicle implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Vehicle
+     * @return $this|\Anand\Make
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = VehicleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = MakeTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -899,7 +807,7 @@ abstract class Vehicle implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Vehicle
+     * @return $this|\Anand\Make
      */
     public function setByPosition($pos, $value)
     {
@@ -908,13 +816,7 @@ abstract class Vehicle implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setName($value);
-                break;
-            case 2:
-                $this->setColor($value);
-                break;
-            case 3:
-                $this->setMakeId($value);
+                $this->setBrandname($value);
                 break;
         } // switch()
 
@@ -940,19 +842,13 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = VehicleTableMap::getFieldNames($keyType);
+        $keys = MakeTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setColor($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setMakeId($arr[$keys[3]]);
+            $this->setBrandname($arr[$keys[1]]);
         }
     }
 
@@ -973,7 +869,7 @@ abstract class Vehicle implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Vehicle The current object, for fluid interface
+     * @return $this|\Anand\Make The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -993,19 +889,13 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(VehicleTableMap::DATABASE_NAME);
+        $criteria = new Criteria(MakeTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(VehicleTableMap::COL_ID)) {
-            $criteria->add(VehicleTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(MakeTableMap::COL_ID)) {
+            $criteria->add(MakeTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(VehicleTableMap::COL_NAME)) {
-            $criteria->add(VehicleTableMap::COL_NAME, $this->name);
-        }
-        if ($this->isColumnModified(VehicleTableMap::COL_COLOR)) {
-            $criteria->add(VehicleTableMap::COL_COLOR, $this->color);
-        }
-        if ($this->isColumnModified(VehicleTableMap::COL_MAKE_ID)) {
-            $criteria->add(VehicleTableMap::COL_MAKE_ID, $this->make_id);
+        if ($this->isColumnModified(MakeTableMap::COL_BRANDNAME)) {
+            $criteria->add(MakeTableMap::COL_BRANDNAME, $this->brandname);
         }
 
         return $criteria;
@@ -1023,8 +913,8 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildVehicleQuery::create();
-        $criteria->add(VehicleTableMap::COL_ID, $this->id);
+        $criteria = ChildMakeQuery::create();
+        $criteria->add(MakeTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1086,7 +976,7 @@ abstract class Vehicle implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Vehicle (or compatible) type.
+     * @param      object $copyObj An object of \Anand\Make (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1094,9 +984,21 @@ abstract class Vehicle implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setId($this->getId());
-        $copyObj->setName($this->getName());
-        $copyObj->setColor($this->getColor());
-        $copyObj->setMakeId($this->getMakeId());
+        $copyObj->setBrandname($this->getBrandname());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getVehicles() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addVehicle($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1111,7 +1013,7 @@ abstract class Vehicle implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Vehicle Clone of current object.
+     * @return \Anand\Make Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1124,55 +1026,238 @@ abstract class Vehicle implements ActiveRecordInterface
         return $copyObj;
     }
 
+
     /**
-     * Declares an association between this object and a ChildMake object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param  ChildMake $v
-     * @return $this|\Vehicle The current object (for fluent API support)
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Vehicle' == $relationName) {
+            return $this->initVehicles();
+        }
+    }
+
+    /**
+     * Clears out the collVehicles collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addVehicles()
+     */
+    public function clearVehicles()
+    {
+        $this->collVehicles = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collVehicles collection loaded partially.
+     */
+    public function resetPartialVehicles($v = true)
+    {
+        $this->collVehiclesPartial = $v;
+    }
+
+    /**
+     * Initializes the collVehicles collection.
+     *
+     * By default this just sets the collVehicles collection to an empty array (like clearcollVehicles());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initVehicles($overrideExisting = true)
+    {
+        if (null !== $this->collVehicles && !$overrideExisting) {
+            return;
+        }
+        $this->collVehicles = new ObjectCollection();
+        $this->collVehicles->setModel('\Anand\Vehicle');
+    }
+
+    /**
+     * Gets an array of ChildVehicle objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildMake is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildVehicle[] List of ChildVehicle objects
      * @throws PropelException
      */
-    public function setMake(ChildMake $v = null)
+    public function getVehicles(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        if ($v === null) {
-            $this->setMakeId(NULL);
-        } else {
-            $this->setMakeId($v->getId());
+        $partial = $this->collVehiclesPartial && !$this->isNew();
+        if (null === $this->collVehicles || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collVehicles) {
+                // return empty collection
+                $this->initVehicles();
+            } else {
+                $collVehicles = ChildVehicleQuery::create(null, $criteria)
+                    ->filterByMake($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collVehiclesPartial && count($collVehicles)) {
+                        $this->initVehicles(false);
+
+                        foreach ($collVehicles as $obj) {
+                            if (false == $this->collVehicles->contains($obj)) {
+                                $this->collVehicles->append($obj);
+                            }
+                        }
+
+                        $this->collVehiclesPartial = true;
+                    }
+
+                    return $collVehicles;
+                }
+
+                if ($partial && $this->collVehicles) {
+                    foreach ($this->collVehicles as $obj) {
+                        if ($obj->isNew()) {
+                            $collVehicles[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collVehicles = $collVehicles;
+                $this->collVehiclesPartial = false;
+            }
         }
 
-        $this->aMake = $v;
+        return $this->collVehicles;
+    }
 
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildMake object, it will not be re-added.
-        if ($v !== null) {
-            $v->addVehicle($this);
+    /**
+     * Sets a collection of ChildVehicle objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $vehicles A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildMake The current object (for fluent API support)
+     */
+    public function setVehicles(Collection $vehicles, ConnectionInterface $con = null)
+    {
+        /** @var ChildVehicle[] $vehiclesToDelete */
+        $vehiclesToDelete = $this->getVehicles(new Criteria(), $con)->diff($vehicles);
+
+
+        $this->vehiclesScheduledForDeletion = $vehiclesToDelete;
+
+        foreach ($vehiclesToDelete as $vehicleRemoved) {
+            $vehicleRemoved->setMake(null);
         }
 
+        $this->collVehicles = null;
+        foreach ($vehicles as $vehicle) {
+            $this->addVehicle($vehicle);
+        }
+
+        $this->collVehicles = $vehicles;
+        $this->collVehiclesPartial = false;
 
         return $this;
     }
 
-
     /**
-     * Get the associated ChildMake object
+     * Returns the number of related Vehicle objects.
      *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildMake The associated ChildMake object.
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Vehicle objects.
      * @throws PropelException
      */
-    public function getMake(ConnectionInterface $con = null)
+    public function countVehicles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        if ($this->aMake === null && ($this->make_id !== null)) {
-            $this->aMake = ChildMakeQuery::create()->findPk($this->make_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aMake->addVehicles($this);
-             */
+        $partial = $this->collVehiclesPartial && !$this->isNew();
+        if (null === $this->collVehicles || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collVehicles) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getVehicles());
+            }
+
+            $query = ChildVehicleQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMake($this)
+                ->count($con);
         }
 
-        return $this->aMake;
+        return count($this->collVehicles);
+    }
+
+    /**
+     * Method called to associate a ChildVehicle object to this object
+     * through the ChildVehicle foreign key attribute.
+     *
+     * @param  ChildVehicle $l ChildVehicle
+     * @return $this|\Anand\Make The current object (for fluent API support)
+     */
+    public function addVehicle(ChildVehicle $l)
+    {
+        if ($this->collVehicles === null) {
+            $this->initVehicles();
+            $this->collVehiclesPartial = true;
+        }
+
+        if (!$this->collVehicles->contains($l)) {
+            $this->doAddVehicle($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildVehicle $vehicle The ChildVehicle object to add.
+     */
+    protected function doAddVehicle(ChildVehicle $vehicle)
+    {
+        $this->collVehicles[]= $vehicle;
+        $vehicle->setMake($this);
+    }
+
+    /**
+     * @param  ChildVehicle $vehicle The ChildVehicle object to remove.
+     * @return $this|ChildMake The current object (for fluent API support)
+     */
+    public function removeVehicle(ChildVehicle $vehicle)
+    {
+        if ($this->getVehicles()->contains($vehicle)) {
+            $pos = $this->collVehicles->search($vehicle);
+            $this->collVehicles->remove($pos);
+            if (null === $this->vehiclesScheduledForDeletion) {
+                $this->vehiclesScheduledForDeletion = clone $this->collVehicles;
+                $this->vehiclesScheduledForDeletion->clear();
+            }
+            $this->vehiclesScheduledForDeletion[]= clone $vehicle;
+            $vehicle->setMake(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1182,13 +1267,8 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aMake) {
-            $this->aMake->removeVehicle($this);
-        }
         $this->id = null;
-        $this->name = null;
-        $this->color = null;
-        $this->make_id = null;
+        $this->brandname = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1207,9 +1287,14 @@ abstract class Vehicle implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collVehicles) {
+                foreach ($this->collVehicles as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
-        $this->aMake = null;
+        $this->collVehicles = null;
     }
 
     /**
@@ -1219,7 +1304,7 @@ abstract class Vehicle implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(VehicleTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(MakeTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**
